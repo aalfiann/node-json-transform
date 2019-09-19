@@ -1,5 +1,4 @@
-var DataTransform = require('../index.js').DataTransform,
-	_ = require("lodash");
+var DataTransform = require('../index.js').DataTransform;
 
 var data = {
 	posts: [{
@@ -43,11 +42,15 @@ var map = {
 	}]
 };
 
+function deepClone(data) {
+	return JSON.parse(JSON.stringify(data));
+}
+
 describe("node-json-transform", function() {
 
 	it("should extract values", function() {
 
-		var dataTransform = DataTransform(_.clone(data), map);
+		var dataTransform = DataTransform(deepClone(data), map);
 
 		expect(dataTransform.getValue(data, "posts.0.description")).toEqual("description1");
 
@@ -55,7 +58,7 @@ describe("node-json-transform", function() {
 
 	it("should transform data", function() {
 
-		var dataTransform = DataTransform(_.clone(data), map);
+		var dataTransform = DataTransform(deepClone(data), map);
 
 		expect(dataTransform.transform()).toEqual([{
 			name: "TITLE1",
@@ -70,7 +73,7 @@ describe("node-json-transform", function() {
 
 	it("should transform data asynchronously", function() {
 
-		var dataTransform = DataTransform(_.clone(data), map);
+		var dataTransform = DataTransform(deepClone(data), map);
 		dataTransform.transformAsync().then(function(result){
 			expect(result).toEqual([{
 				name: "TITLE1",
@@ -86,11 +89,11 @@ describe("node-json-transform", function() {
 	it("should allow you to clear out fields", function() {
 
 		// Add a map item to  clear out the "clearMe" field.
-		var newMap = _.clone(map);
-		newMap.item = _.clone(map.item);
+		var newMap = Object.assign({},map);
+		newMap.item = deepClone(map.item);
 		newMap.item.clearMe = "";
 
-		var dataTransform = DataTransform(_.clone(data), newMap);
+		var dataTransform = DataTransform(deepClone(data), newMap);
 
 		expect(dataTransform.transform()).toEqual([{
 			name: "TITLE1",
@@ -107,11 +110,11 @@ describe("node-json-transform", function() {
 	it("should allow you to set fields", function() {
 
 		// Add a map item to  clear out the "clearMe" field.
-		var newMap = _.clone(map);
-		newMap.item = _.clone(map.item);
+		var newMap = Object.assign({},map);
+		newMap.item = deepClone(map.item);
 		newMap.item.fieldThatDoesntExist = "";
 
-		var dataTransform = DataTransform(_.clone(data), newMap);
+		var dataTransform = DataTransform(deepClone(data), newMap);
 
 		expect(dataTransform.transform()).toEqual([{
 			name: "TITLE1",
@@ -134,7 +137,7 @@ describe("node-json-transform", function() {
 			}
 		};
 
-		var dataTransform = DataTransform(_.clone(data), newMap);
+		var dataTransform = DataTransform(deepClone(data), newMap);
 
 		expect(dataTransform.transform()).toEqual([{
 			fieldGroup: [
@@ -174,7 +177,7 @@ describe("node-json-transform", function() {
 			}]
 		}];
 
-		var dataTransform = DataTransform(_.clone(data), newMap);
+		var dataTransform = DataTransform(deepClone(data), newMap);
 
 		expect(dataTransform.transform()).toEqual([{
 			fieldGroup: [
@@ -189,7 +192,7 @@ describe("node-json-transform", function() {
 	});
 
 	it("should allow you to use custom functions as operators", function(){
-		var newMap = _.clone(map);
+		var newMap = deepClone(map);
 
 		newMap.operate = [{
 			run: function (val){ 
@@ -211,7 +214,7 @@ describe("node-json-transform", function() {
 	})
 
 	it("should allow multiple operators", function(){
-		var newMap = _.clone(map);
+		var newMap = deepClone(map);
 
 		newMap.operate = [
 			{

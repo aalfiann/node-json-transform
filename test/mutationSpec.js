@@ -14,12 +14,16 @@ var map = {
 	}
 };
 
+function deepClone(data) {
+	return JSON.parse(JSON.stringify(data));
+}
+
 
 describe("node-json-transform", function() {
 
 	it("should not manipulate the raw data", function() {
 
-		var clone = _.clone(data);
+		var clone = deepClone(data);
 
 		var dataTransform = DataTransform(data, map);
 		dataTransform.transform();
@@ -30,7 +34,7 @@ describe("node-json-transform", function() {
 
 	it("should not manipulate the raw data", function() {
 
-		var clone = _.clone(map);
+		var clone = deepClone(map);
 
 		var dataTransform = DataTransform(data, map);
 		dataTransform.transform();

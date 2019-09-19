@@ -31,11 +31,15 @@ var mapEach = {
 	}
 };
 
+function deepClone(data) {
+	return JSON.parse(JSON.stringify(data));
+}
+
 describe("node-json-transform", function() {
 
 	it("should pass the context to operate.run", function() {
 
-		var dataTransform = DataTransform(_.clone(data), map);
+		var dataTransform = DataTransform(deepClone(data), map);
 
 		var context = {
 			intro: 'Hi '
@@ -49,7 +53,7 @@ describe("node-json-transform", function() {
 
 	it("should pass the context to each", function() {
 
-    var dataTransform = DataTransform(_.clone(data), map);
+    var dataTransform = DataTransform(deepClone(data), map);
 
     var context = {
       intro: 'Hi '

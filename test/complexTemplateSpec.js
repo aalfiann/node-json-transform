@@ -1,5 +1,4 @@
-var DataTransform = require('../index.js').DataTransform,
-	_ = require("lodash");
+var DataTransform = require('../index.js').DataTransform;
 
 var map = {
 	list: 'items',

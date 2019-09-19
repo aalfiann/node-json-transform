@@ -1,10 +1,36 @@
 // DataTransform
 
-var _ = require('lodash');
-
 exports.DataTransform = function(data, map){
 
 	return {
+
+		foreach(data,callback) {
+			if(this.isObject(data)) {
+				var keys = Object.keys(data);
+				var values = Object.values(data);
+				var i =0;
+				var l = keys.length;
+				for(i;i<l;i++){
+					callback(values[i],keys[i]);
+				}
+			} else {
+				if(Array.isArray(data)) {
+					data.forEach(function(value,key){
+						callback(value,key);
+					});
+				} else {
+					throw new Error('Failed to iteration. Data is not an array or object.');
+				}
+			}
+		},
+
+		isObject (value) {
+			return value && typeof value === 'object' && value.constructor === Object;
+		},
+
+		isEmptyObject: function(value) {
+			return (value === undefined || value === null || (Object.keys(value).length === 0 && value.constructor === Object));
+		},
 
 		defaultOrNull: function(key) {
 			return key && map.defaults ? map.defaults[key] : null;
@@ -78,10 +104,10 @@ exports.DataTransform = function(data, map){
 			var value = this.getValue(data, map.list);
 			var normalized = [];
 
-			if(!_.isEmpty(value)) {
+			if(!this.isEmptyObject(value)) {
 				var list = this.getList();
-				normalized = map.item ? _.map(list, _.bind(this.iterator, this, map.item)) : list;
-				normalized = _.bind(this.operate, this, normalized)(context);
+				normalized = map.item ? list.map(this.iterator.bind(this, map.item)) : list;
+				normalized = this.operate.bind(this, normalized)(context);
 				normalized = this.each(normalized, context);
 				normalized = this.removeAll(normalized);
 			}
@@ -101,14 +127,14 @@ exports.DataTransform = function(data, map){
 		},
 
 		removeAll: function(data){
-      if (_.isArray(map.remove)) {
-        return _.each(data, this.remove)
-      }
+			if (Array.isArray(map.remove)) {
+				data.forEach(this.remove);
+			}
 			return data;
 		},
 
 		remove: function(item){
-			_.each(map.remove, function (key) {
+			map.remove.forEach(function (key) {
 				delete item[key];
 			});
 			return item;
@@ -117,8 +143,8 @@ exports.DataTransform = function(data, map){
 		operate: function(data, context) {
 
 			if(map.operate) {
-				_.each(map.operate, _.bind(function(method){
-					data = _.map(data, _.bind(function(item){
+				map.operate.forEach(function(method){
+					data = data.map(function(item){
 						var fn;
 						if( 'string' === typeof method.run ) {
 							fn = eval( method.run );
@@ -127,8 +153,8 @@ exports.DataTransform = function(data, map){
 						}
 						this.setValue(item,method.on,fn(this.getValue(item,method.on), context));
 						return item;
-					},this));
-				},this));
+					}.bind(this));
+				}.bind(this));
 			}
 			return data;
 
@@ -136,7 +162,7 @@ exports.DataTransform = function(data, map){
 
 		each: function(data, context){
 			if( map.each ) {
-				_.each(data, function (value, index, collection) {
+				data.forEach(function (value, index, collection) {
 					return map.each(value, index, collection, context);
 				});
 			}  
@@ -151,21 +177,22 @@ exports.DataTransform = function(data, map){
 			if(typeof map === 'string') {
 				return this.getValue(item, map);
 			}
-			_.each(map, _.bind(function(oldkey, newkey) {
+			
+			this.foreach(map, function(oldkey, newkey) {
 				if(typeof oldkey === 'string' && oldkey.length > 0) {
 					obj[newkey] = this.getValue(item, oldkey, newkey);
-				} else if( _.isArray(oldkey) ) {
-					var array = _.map(oldkey, _.bind(function(item,map) {return this.iterator(map,item)}, this , item));//need to swap arguments for bind
+				} else if( Array.isArray(oldkey) ) {
+					var array = oldkey.map(function(item,map) {return this.iterator(map,item)}.bind(this , item));//need to swap arguments for bind
 					obj[newkey] = array;
 				}  else if(typeof oldkey === 'object'){
-					var bound = _.bind(this.iterator, this, oldkey,item);
+					var bound = this.iterator.bind(this, oldkey,item);
 					obj[newkey] = bound();
 				}
 				else {
 					obj[newkey] = "";
-				}	
-
-			}, this));
+				}
+			}.bind(this));
+			
 			return obj;
 
 		}
