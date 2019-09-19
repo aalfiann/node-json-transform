@@ -1,4 +1,7 @@
 # node-data-transform
+This is a fork version form original [node-json-transform](https://github.com/bozzltron/node-json-transform).  
+The difference about this with original version is that we already removed Lodash dependencies. So this library has no dependencies anymore.
+
 
 ## Usage
 
@@ -368,12 +371,14 @@ Enjoy!
 ## Credits
 
   - [Michael Bosworth](http://github.com/bozzltron)
+  - [M ABD AZIZ ALFIAN](http://github.com/aalfiann)
 
 ## License
 
 (The MIT License)
 
 Copyright (c) 2014 Michael Bosworth
+Copyright (c) 2019 M ABD AZIZ ALFIAN
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

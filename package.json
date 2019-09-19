@@ -8,22 +8,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bozzltron/node-json-transform"
+    "url": "https://github.com/aalfiann/node-json-transform"
   },
   "keywords": [
     "json",
     "transform",
     "node"
   ],
-  "author": "Michael Bosworth",
+  "author": "M ABD AZIZ ALFIAN",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bozzltron/node-json-transform/issues"
+    "url": "https://github.com/aalfiann/node-json-transform/issues"
   },
-  "homepage": "https://github.com/bozzltron/node-json-transform",
-  "dependencies": {
-    "lodash": "^4.17.4"
-  },
+  "homepage": "https://github.com/aalfiann/node-json-transform",
+  "dependencies": {},
   "devDependencies": {
     "deep-freeze": "0.0.1",
     "jasmine-node": "^1.14.5"
